@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWzq", "MainForm\TestWzq.csproj", "{36B9BA77-B437-4622-ADEB-0059888F4E49}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpConnect", "TcpConnect\TcpConnect.csproj", "{0E08E24C-2E48-401E-B0FD-9AF0DE5C0988}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpConect", "TcpConect\TcpConect.csproj", "{6CFC55ED-845C-4169-9D6A-C09938D36B97}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gogogo", "Gogogo\Gogogo.csproj", "{0222CD5A-6E90-4B2C-9008-BF86D2335340}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{36B9BA77-B437-4622-ADEB-0059888F4E49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36B9BA77-B437-4622-ADEB-0059888F4E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36B9BA77-B437-4622-ADEB-0059888F4E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36B9BA77-B437-4622-ADEB-0059888F4E49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6CFC55ED-845C-4169-9D6A-C09938D36B97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6CFC55ED-845C-4169-9D6A-C09938D36B97}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6CFC55ED-845C-4169-9D6A-C09938D36B97}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6CFC55ED-845C-4169-9D6A-C09938D36B97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E08E24C-2E48-401E-B0FD-9AF0DE5C0988}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E08E24C-2E48-401E-B0FD-9AF0DE5C0988}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E08E24C-2E48-401E-B0FD-9AF0DE5C0988}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E08E24C-2E48-401E-B0FD-9AF0DE5C0988}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0222CD5A-6E90-4B2C-9008-BF86D2335340}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0222CD5A-6E90-4B2C-9008-BF86D2335340}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0222CD5A-6E90-4B2C-9008-BF86D2335340}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0222CD5A-6E90-4B2C-9008-BF86D2335340}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,0 @@
-c:\users\administrator\documents\visual studio 2015\Projects\TcpConect\TcpConect\bin\Debug\TcpConect.exe.config
-c:\users\administrator\documents\visual studio 2015\Projects\TcpConect\TcpConect\bin\Debug\TcpConect.exe
-c:\users\administrator\documents\visual studio 2015\Projects\TcpConect\TcpConect\bin\Debug\TcpConect.pdb
-c:\users\administrator\documents\visual studio 2015\Projects\TcpConect\TcpConect\obj\Debug\TcpConect.exe
-c:\users\administrator\documents\visual studio 2015\Projects\TcpConect\TcpConect\obj\Debug\TcpConect.pdb
-c:\users\administrator\documents\visual studio 2015\Projects\TcpConect\TcpConect\obj\Debug\TcpConect.csprojResolveAssemblyReference.cache
-C:\Users\Administrator\Desktop\tcpconect-master\TcpConect\bin\Debug\TcpConect.exe.config
-C:\Users\Administrator\Desktop\tcpconect-master\TcpConect\obj\Debug\TcpConect.exe
-C:\Users\Administrator\Desktop\tcpconect-master\TcpConect\obj\Debug\TcpConect.pdb
