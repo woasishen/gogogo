@@ -1,0 +1,117 @@
+﻿using System;
+using System.IO;
+using System.Net.Sockets;
+using System.Text;
+using System.Threading;
+using Newtonsoft.Json;
+using TcpConnect.ServerInterface;
+using TcpConnect.ServerManager;
+
+namespace TcpConnect
+{
+    public class TcpSocket
+    {
+        private static int HeadLength;
+
+        private readonly TcpClient _client;
+        private readonly int _recieveBuffSize;
+
+        private readonly SyncQueue<Packet> _sendQueue = new SyncQueue<Packet>();
+        private readonly SyncQueue<Packet> _getQueue = new SyncQueue<Packet>();
+
+        private readonly GetMsgManager _getMsgManager;
+
+        public ServerMsgAction MsgActions { get; } = new ServerMsgAction();
+
+        public SendMethod SendMethod { get; }
+
+        public TcpSocket(string address, int port)
+        {
+            _getMsgManager = new GetMsgManager(MsgActions);
+            SendMethod = new SendMethod(_sendQueue);
+
+            _client = new TcpClient(address, port);
+            _recieveBuffSize = _client.ReceiveBufferSize;
+
+            //client开始必须和server约定Head长度
+            var buffer = new byte[4];
+            _client.GetStream().Read(buffer, 0, 4);
+            HeadLength = Convert.ToInt32(Encoding.UTF8.GetString(buffer, 0, 4));
+
+            var sendThread = new Thread(SendThread);
+            var getThread = new Thread(GetThread);
+            var handleMsgThread = new Thread(HandleMsgFromServer);
+            
+            sendThread.Start();
+            getThread.Start();
+            handleMsgThread.Start();
+        }
+
+        private void HandleMsgFromServer()
+        {
+            while (true)
+            {
+                var msg = _getQueue.Dequeue();
+                _getMsgManager.HandleMsg(msg);
+            }
+            // ReSharper disable once FunctionNeverReturns
+        }
+
+        private void SendThread()
+        {
+            while (true)
+            {
+                var msg = _sendQueue.Dequeue();
+                using (var ms = new MemoryStream())
+                {
+                    var json = JsonConvert.SerializeObject(msg);
+                    using (var sw = new StreamWriter(ms))
+                    {
+                        sw.Write(json);
+                        sw.Flush();
+                        var title = BitConverter.GetBytes(ms.Length);
+                        _client.GetStream().Write(title, 0, HeadLength);
+                        _client.GetStream().Write(ms.GetBuffer(), 0, (int) ms.Length);
+                    }
+                }
+            }
+            // ReSharper disable once FunctionNeverReturns
+        }
+
+        private void GetThread()
+        {
+            var bodyBuffer = new byte[_recieveBuffSize];
+            var headBuffer = new byte[HeadLength];
+            var bodyStream = new MemoryStream();
+            var sr = new StreamReader(bodyStream);
+
+            while (true)
+            {
+                _client.GetStream().Read(headBuffer, 0, HeadLength);
+                var leftLength = BitConverter.ToInt32(headBuffer, 0);
+                while (leftLength > 0)
+                {
+                    if (leftLength <= _recieveBuffSize)
+                    {
+                        _client.GetStream().Read(bodyBuffer, 0, leftLength);
+                        bodyStream.Write(bodyBuffer, 0, leftLength);
+                        leftLength = 0;
+                    }
+                    else
+                    {
+                        _client.GetStream().Read(bodyBuffer, 0, _recieveBuffSize);
+                        bodyStream.Write(bodyBuffer, 0, _recieveBuffSize);
+                        leftLength = leftLength - _recieveBuffSize;
+                    }
+                    
+                }
+                bodyStream.Position = 0;
+                var str = sr.ReadToEnd();
+                var packet = JsonConvert.DeserializeObject<Packet>(str);
+                _getQueue.Enqueue(packet);
+                bodyStream.SetLength(0);
+            }
+            // ReSharper disable once FunctionNeverReturns
+        }
+    }
+}
