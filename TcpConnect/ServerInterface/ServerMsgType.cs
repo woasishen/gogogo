@@ -99,6 +99,8 @@ namespace TcpConnect.ServerInterface
         [ServerId(ServerMsgId.joinroomc)]
         public class JoinRoom : ServerMsgBase
         {
+            [JsonProperty(@"roomsteps")]
+            public Stack<Pos> RoomSteps { get; private set; }
         }
 
         [ServerId(ServerMsgId.leaveroomc)]

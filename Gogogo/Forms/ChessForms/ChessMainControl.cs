@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using Gogogo.Helper;
 using Gogogo.StaticData;
+using TcpConnect.ServerInterface;
 
 namespace Gogogo.Forms.ChessForms
 {
