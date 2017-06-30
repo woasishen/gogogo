@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
-using TcpConnect.ServerInterface;
 
-namespace Gogogo.Helper
+namespace Gogogo.StaticData
 {
     public static class HandleCtrlInOtherThread
     {
-
         public static void HandleCtrlInBackGroundThread(
             Control ctrl,
             Action call)
@@ -21,14 +19,14 @@ namespace Gogogo.Helper
             }
         }
 
-        public static void HandleCtrlInBackGroundThread(
+        public static void HandleCtrlInBackGroundThread<T>(
             Control ctrl,
-            Action<ServerMsgBase> call,
-            ServerMsgBase arg)
+            Action<T> call,
+            T arg)
         {
             if (ctrl.InvokeRequired)
             {
-                ctrl.Invoke(new Action<ServerMsgBase>(call), new object[] { arg });
+                ctrl.Invoke(new Action<T>(call), new object[] { arg });
             }
             else
             {

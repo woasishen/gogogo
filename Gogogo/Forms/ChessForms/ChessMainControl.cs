@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using Gogogo.Helper;
+using Gogogo.StaticData;
 
 namespace Gogogo.Forms.ChessForms
 {
@@ -72,9 +73,9 @@ namespace Gogogo.Forms.ChessForms
         private void ReInitCellSize()
         {
             _cellWStep = ((float)ClientSize.Width - Padding.Left - Padding.Right)
-                / (Configs.BORDER_SIZE - 1);
+                / (GlobalStatic.BORDER_SIZE - 1);
             _cellHStep = ((float)ClientSize.Height - Padding.Top - Padding.Bottom)
-                / (Configs.BORDER_SIZE - 1);
+                / (GlobalStatic.BORDER_SIZE - 1);
             _itemDiameter = Math.Min(_cellWStep, _cellHStep) * ITEM_SIZE_SCALE;
         }
 
@@ -91,7 +92,7 @@ namespace Gogogo.Forms.ChessForms
 
         private void DrawNums(Graphics g)
         {
-            for (var i = 0; i < Configs.BORDER_SIZE; i++)
+            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
             {
                 g.DrawString(
                     ((char)(i + 65)).ToString(),
@@ -108,7 +109,7 @@ namespace Gogogo.Forms.ChessForms
                         LineAlignment = StringAlignment.Far
                     });
             }
-            for (var i = 0; i < Configs.BORDER_SIZE; i++)
+            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
             {
                 g.DrawString(
                     i.ToString(),
@@ -129,7 +130,7 @@ namespace Gogogo.Forms.ChessForms
 
         private void DrawLines(Graphics g)
         {
-            for (var i = 0; i < Configs.BORDER_SIZE; i++)
+            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
             {
                 g.DrawLine(_linePen,
                     i * _cellWStep + Padding.Left,
@@ -137,7 +138,7 @@ namespace Gogogo.Forms.ChessForms
                     i * _cellWStep + Padding.Left,
                     ClientSize.Height - Padding.Bottom);
             }
-            for (var i = 0; i < Configs.BORDER_SIZE; i++)
+            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
             {
                 g.DrawLine(_linePen,
                     Padding.Left,
@@ -149,9 +150,9 @@ namespace Gogogo.Forms.ChessForms
 
         private void DrawCells(Graphics g)
         {
-            for (var i = 0; i < Configs.BORDER_SIZE; i++)
+            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
             {
-                for (var j = 0; j < Configs.BORDER_SIZE; j++)
+                for (var j = 0; j < GlobalStatic.BORDER_SIZE; j++)
                 {
                     if (_border.GetCellStatus(i, j) == CellStatus.Empty)
                     {
@@ -194,7 +195,7 @@ namespace Gogogo.Forms.ChessForms
             var x = (int)Math.Round((e.X - Padding.Left) / _cellWStep);
             var y = (int)Math.Round((e.Y - Padding.Top) / _cellHStep);
             if (x < 0 || y < 0 
-                || x > Configs.BORDER_SIZE || y > Configs.BORDER_SIZE 
+                || x > GlobalStatic.BORDER_SIZE || y > GlobalStatic.BORDER_SIZE 
                 || _border.GetCellStatus(x ,y) != CellStatus.Empty)
             {
                 return;

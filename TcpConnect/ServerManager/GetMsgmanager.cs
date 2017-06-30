@@ -37,19 +37,25 @@ namespace TcpConnect.ServerManager
                 }
                 _msgTypeDict[serverIdAttr.Id] = typeInfo;
             }
-
         }
 
         public void HandleMsg(Packet packet)
         {
             var id = (ServerMsgId)Enum.Parse(typeof(ServerMsgId), packet.Id);
-
-            var msg = (ServerMsgBase)JsonConvert.DeserializeObject(packet.Msg.ToString(), _msgTypeDict[id]);
-
-            if (_msgActionDict[id].GetValue(_serverMsgAction) != null)
+            var action = _msgActionDict[id].GetValue(_serverMsgAction);
+            if (action == null)
             {
-                ((Action<ServerMsgBase>)_msgActionDict[id].GetValue(_serverMsgAction)).Invoke(msg);
+                return;
             }
+            var methond = action.GetType().GetMethod("Invoke");
+            if (packet.Id.StartsWith("b_"))
+            {
+                methond.Invoke(action, new object[] {packet.Msg.ToString()});
+                return;
+            }
+            var msg = JsonConvert.DeserializeObject(packet.Msg.ToString(), _msgTypeDict[id]);
+            
+            methond.Invoke(action, new[] { msg });
         }
     }
 }

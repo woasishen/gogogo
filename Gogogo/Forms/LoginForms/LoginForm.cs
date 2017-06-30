@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Gogogo.Helper;
+using Gogogo.Instances;
+using Gogogo.StaticData;
 
 namespace Gogogo.Forms.LoginForms
 {
     public partial class LoginForm : BaseForm
     {
+        public Action CloseDele;
+
         public LoginForm()
         {
             InitializeComponent();
@@ -25,6 +28,9 @@ namespace Gogogo.Forms.LoginForms
             Properties.Settings.Default.AccountId = nameTextBox.Text;
             Properties.Settings.Default.Password = passwordTextBox.Text;
             Properties.Settings.Default.Save();
+            TcpInstance.Instance.Socket.SendMethod.Login(
+                Properties.Settings.Default.AccountId,
+                Properties.Settings.Default.Password);
             DialogResult = DialogResult.OK;
         }
 
@@ -38,7 +44,7 @@ namespace Gogogo.Forms.LoginForms
 
         private void linkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            DialogResult = DialogResult.Yes;
+            this.ShowForm<RegistForm>();
         }
 
         private void textBox_Enter(object sender, EventArgs e)

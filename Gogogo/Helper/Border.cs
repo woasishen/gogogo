@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Gogogo.StaticData;
 
 namespace Gogogo.Helper
 {
@@ -15,20 +16,20 @@ namespace Gogogo.Helper
 
         public Border()
         {
-            _cellStatusArr = new CellStatus[Configs.BORDER_SIZE][];
+            _cellStatusArr = new CellStatus[GlobalStatic.BORDER_SIZE][];
 
-            for (var i = 0; i < Configs.BORDER_SIZE; i++)
+            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
             {
-                _cellStatusArr[i] = new CellStatus[Configs.BORDER_SIZE];
+                _cellStatusArr[i] = new CellStatus[GlobalStatic.BORDER_SIZE];
             }
             ReInitCellStatusAndPosGole();
         }
 
         private void ReInitCellStatusAndPosGole()
         {
-            for (var i = 0; i < Configs.BORDER_SIZE; i++)
+            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
             {
-                for (var j = 0; j < Configs.BORDER_SIZE; j++)
+                for (var j = 0; j < GlobalStatic.BORDER_SIZE; j++)
                 {
                     _cellStatusArr[i][j] = CellStatus.Empty;
                 }

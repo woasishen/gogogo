@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Gogogo.Helper;
+using Gogogo.Instances;
+using Gogogo.StaticData;
 
 namespace Gogogo.Forms.LoginForms
 {
@@ -22,10 +23,13 @@ namespace Gogogo.Forms.LoginForms
             if (passwordTextBox.Text != confirmTextBox.Text)
             {
                 MessageBox.Show(@"两次密码不一致");
-                passwordTextBox.BackColor = Configs.InvalidBackColor;
-                confirmTextBox.BackColor = Configs.InvalidBackColor;
+                passwordTextBox.BackColor = GlobalStatic.InvalidBackColor;
+                confirmTextBox.BackColor = GlobalStatic.InvalidBackColor;
                 return;
             }
+            TcpInstance.Instance.Socket.SendMethod.Regist(
+                nameTextBox.Text,
+                passwordTextBox.Text);
             DialogResult = DialogResult.OK;
         }
 

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Windows.Forms;
+using Gogogo.Instances;
 
 namespace Gogogo
 {
     static class Program
     {
+        public static Form MainForm;
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
@@ -13,7 +15,9 @@ namespace Gogogo
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            TcpInstance.Instance.Init();
+            MainForm = new MainForm();
+            Application.Run(MainForm);
         }
     }
 }

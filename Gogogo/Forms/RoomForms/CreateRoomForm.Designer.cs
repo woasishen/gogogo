@@ -42,6 +42,7 @@
             this.nameTextBox.Size = new System.Drawing.Size(182, 21);
             this.nameTextBox.TabIndex = 0;
             this.nameTextBox.Enter += new System.EventHandler(this.textBox_Enter);
+            this.nameTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nameTextBox_KeyPress);
             // 
             // passwordTextBox
             // 
@@ -52,6 +53,7 @@
             this.passwordTextBox.Size = new System.Drawing.Size(182, 21);
             this.passwordTextBox.TabIndex = 1;
             this.passwordTextBox.Enter += new System.EventHandler(this.textBox_Enter);
+            this.passwordTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.nameTextBox_KeyPress);
             // 
             // createRoomButton
             // 
@@ -105,8 +107,8 @@
         #endregion
         private System.Windows.Forms.Button createRoomButton;
         private System.Windows.Forms.Label nameLabel;
-        public System.Windows.Forms.TextBox nameTextBox;
-        public System.Windows.Forms.TextBox passwordTextBox;
         public System.Windows.Forms.CheckBox passwordCheckBox;
+        private System.Windows.Forms.TextBox nameTextBox;
+        private System.Windows.Forms.TextBox passwordTextBox;
     }
 }

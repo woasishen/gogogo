@@ -92,7 +92,6 @@
             this.Controls.Add(this.bottomPanel);
             this.DoubleBuffered = true;
             this.Name = "ChessMainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ChessMainForm";
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.bottomPanel.ResumeLayout(false);

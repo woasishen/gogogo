@@ -112,7 +112,6 @@
             this.Controls.Add(this.passwordTextBox);
             this.Controls.Add(this.nameTextBox);
             this.Name = "LoginForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "LoginForm";
             this.ResumeLayout(false);
             this.PerformLayout();

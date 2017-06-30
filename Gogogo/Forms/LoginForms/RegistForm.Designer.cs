@@ -118,7 +118,6 @@
             this.Controls.Add(this.passwordTextBox);
             this.Controls.Add(this.nameTextBox);
             this.Name = "RegistForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "RegistForm";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -131,8 +130,8 @@
         private System.Windows.Forms.Label nameLabel;
         private System.Windows.Forms.Button registButton;
         private System.Windows.Forms.Label confirmLabel;
-        public System.Windows.Forms.TextBox passwordTextBox;
-        public System.Windows.Forms.TextBox nameTextBox;
-        public System.Windows.Forms.TextBox confirmTextBox;
+        private System.Windows.Forms.TextBox passwordTextBox;
+        private System.Windows.Forms.TextBox nameTextBox;
+        private System.Windows.Forms.TextBox confirmTextBox;
     }
 }
