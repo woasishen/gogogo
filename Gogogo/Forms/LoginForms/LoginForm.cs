@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Gogogo.Instances;
-using Gogogo.StaticData;
+using Gogogo.Statics;
 
 namespace Gogogo.Forms.LoginForms
 {

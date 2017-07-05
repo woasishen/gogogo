@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Gogogo.StaticData
+namespace Gogogo.Statics
 {
     public static class HandleCtrlInOtherThread
     {
@@ -11,11 +11,11 @@ namespace Gogogo.StaticData
         {
             if (ctrl.InvokeRequired)
             {
-                ctrl.Invoke(new Action(call), new object[] { });
+                ctrl.BeginInvoke(call, null);
             }
             else
             {
-                call.Invoke();
+                call();
             }
         }
 
@@ -26,7 +26,7 @@ namespace Gogogo.StaticData
         {
             if (ctrl.InvokeRequired)
             {
-                ctrl.Invoke(new Action<T>(call), new object[] { arg });
+                ctrl.BeginInvoke(call, arg);
             }
             else
             {

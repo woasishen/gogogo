@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Gogogo.Forms;
+using Gogogo.Forms.ChessForms;
 using Gogogo.Forms.LoginForms;
 using Gogogo.Forms.RoomForms;
 using Gogogo.Instances;
-using Gogogo.StaticData;
+using Gogogo.Statics;
 using TcpConnect.ServerInterface;
 
 namespace Gogogo
@@ -25,7 +27,7 @@ namespace Gogogo
 
             public string RoomName { get; }
             public string Password { get; }
-            public int PlayerCount { get; }
+            private int PlayerCount { get; }
             public override string ToString()
             {
                 return $"{RoomName}({PlayerCount}人)";
@@ -48,67 +50,15 @@ namespace Gogogo
                     msg);
             };
 
-            TcpInstance.Instance.Socket.MsgActions.Loginc += msg =>
-            {
-                HandleCtrlInOtherThread.HandleCtrlInBackGroundThread(
-                    this,
-                    loginMsg =>
-                    {
-                        if (!loginMsg.Succeed)
-                        {
-                            return;
-                        }
-                        userNameLabel.Text = GlobalStatic.CurUser;
-                        welcomPanel.Show();
-                    },
-                    msg);
+            TcpInstance.Instance.Socket.MsgActions.Loginc += RefreshUser;
+            TcpInstance.Instance.Socket.MsgActions.Registc += RefreshUser;
+            TcpInstance.Instance.Socket.MsgActions.Logoutc += RefreshUser;
 
-            };
+            TcpInstance.Instance.Socket.MsgActions.JoinRoomc += JoinRoomc;
 
-            TcpInstance.Instance.Socket.MsgActions.Registc += msg =>
-            {
-                HandleCtrlInOtherThread.HandleCtrlInBackGroundThread(
-                    this,
-                    registMsg =>
-                    {
-                        if (!registMsg.Succeed)
-                        {
-                            return;
-                        }
-                        userNameLabel.Text = GlobalStatic.CurUser;
-                        welcomPanel.Show();
-                    },
-                    msg);
-            };
-
-            TcpInstance.Instance.Socket.MsgActions.Logoutc += msg =>
-            {
-                HandleCtrlInOtherThread.HandleCtrlInBackGroundThread(
-                    this,
-                    logoutMsg =>
-                    {
-                        if (!logoutMsg.Succeed)
-                        {
-                            return;
-                        }
-                        welcomPanel.Hide();
-                    },
-                    msg);
-            };
-
-            TcpInstance.Instance.Socket.MsgActions.GetRoomsc += msg =>
-            {
-                RefreshRooms();
-            };
-
-            TcpInstance.Instance.Socket.MsgActions.B_Join += s =>
-            {
-                RefreshRooms();
-            };
-            TcpInstance.Instance.Socket.MsgActions.B_Leave += s =>
-            {
-                RefreshRooms();
-            };
+            TcpInstance.Instance.Socket.MsgActions.GetRoomsc += RefreshRooms;
+            TcpInstance.Instance.Socket.MsgActions.B_Join += RefreshRooms;
+            TcpInstance.Instance.Socket.MsgActions.B_Leave += RefreshRooms;
 
             TcpInstance.Instance.Socket.SendMethod.GetRooms();
 
@@ -119,18 +69,59 @@ namespace Gogogo
                     Properties.Settings.Default.AccountId,
                     Properties.Settings.Default.Password);
             }
+            RoomStatic.Steps = new Stack<PosInfo>();
+            RoomStatic.Steps.Push(new PosInfo(1, 1, CellStatus.B));
+            RoomStatic.Steps.Push(new PosInfo(2, 3, CellStatus.W));
         }
 
-        private void RefreshRooms()
+        private void JoinRoomc(object msg)
+        {
+            HandleCtrlInOtherThread.HandleCtrlInBackGroundThread(
+                this,
+                () =>
+                {
+                    Hide();
+                    using (var chessForm = new ChessMainForm())
+                    {
+                        if (chessForm.ShowDialog() == DialogResult.OK)
+                        {
+//                            TcpInstance.Instance.Socket.SendMethod.SaveSteps(RoomStatic.Steps);
+                        }
+                        TcpInstance.Instance.Socket.SendMethod.SaveSteps(RoomStatic.Steps);
+                    }
+                    Show();
+                    RefreshUser(null);
+                });
+        }
+
+        private void RefreshUser(object msg)
+        {
+            HandleCtrlInOtherThread.HandleCtrlInBackGroundThread(
+                this,
+                () =>
+                {
+                    if (string.IsNullOrEmpty(GlobalStatic.CurUser))
+                    {
+                        welcomPanel.Hide();
+                    }
+                    else
+                    {
+                        userNameLabel.Text = GlobalStatic.CurUser;
+                        welcomPanel.Show();
+                    }
+                });
+        }
+
+        private void RefreshRooms(object msg)
         {
             HandleCtrlInOtherThread.HandleCtrlInBackGroundThread(
                 this,
                 () =>
                 {
                     listBox.Items.Clear();
-                    noRoomLabel.Visible = !TcpInstance.Instance.RoomsDict.Any();
+                    noRoomLabel.Visible = !RoomStatic.RoomsDict.Any();
 
-                    listBox.Items.AddRange(TcpInstance.Instance.RoomsDict.Select(
+                    listBox.Items.AddRange(RoomStatic.RoomsDict.Select(
                         s => new RoomItem(s.Key, s.Value)).Cast<object>().ToArray());
                 });
         }
@@ -216,6 +207,12 @@ namespace Gogogo
             }
             var roomItem = (RoomItem) listBox.SelectedItem;
             TcpInstance.Instance.Socket.SendMethod.JoinRoom(roomItem.RoomName);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            Environment.Exit(0);
         }
     }
 }

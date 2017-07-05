@@ -1,7 +1,6 @@
 ﻿using System.Windows.Forms;
-using Gogogo.Instances;
 
-namespace Gogogo.StaticData
+namespace Gogogo.Statics
 {
     public static class Extentions
     {

@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Windows.Forms;
-using Gogogo.Forms.LoginForms;
+using Gogogo.Instances;
+using Gogogo.Statics;
+using TcpConnect.ServerInterface;
 
 namespace Gogogo.Forms.ChessForms
 {
@@ -9,43 +10,20 @@ namespace Gogogo.Forms.ChessForms
         public ChessMainForm()
         {
             InitializeComponent();
+            userLabel.Text = $@"欢迎：{GlobalStatic.CurUser}";
         }
 
         private void restarBtn_Click(object sender, EventArgs e)
         {
-            _chessMainControl.RestartGame();
+            //TcpInstance.Instance.Socket.SendMethod.RoomMsg(
+            //    RoomMsgInfoId.Restart);
 
         }
 
         private void redo_Click(object sender, EventArgs e)
         {
-            _chessMainControl.Redo();
-        }
-
-        private void MainForm_Shown(object sender, EventArgs e)
-        {
-            ShowLogin();
-        }
-
-        private void ShowLogin()
-        {
-            DialogResult dialogResult;
-            using (var loginForm = new LoginForm())
-            {
-                dialogResult = loginForm.ShowDialog();
-            }
-            if (dialogResult == DialogResult.Yes)
-            {
-                ShowRegist();
-            }
-        }
-
-        private void ShowRegist()
-        {
-            using (var registForm = new RegistForm()) //regist
-            {
-                registForm.ShowDialog();
-            }
+            //TcpInstance.Instance.Socket.SendMethod.RoomMsg(
+            //    RoomMsgInfoId.UnPutChess);
         }
     }
 }

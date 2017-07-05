@@ -1,4 +1,6 @@
-﻿namespace Gogogo.Forms.ChessForms
+﻿using TcpConnect.ServerInterface;
+
+namespace Gogogo.Forms.ChessForms
 {
     partial class ChessMainControl
     {
@@ -39,7 +41,7 @@
             this.Name = "ChessMainControl";
             this.Padding = new System.Windows.Forms.Padding(30);
             this.Size = new System.Drawing.Size(610, 516);
-            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MainControl_MouseClick);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ChessMainControl_MouseClick);
             this.ResumeLayout(false);
 
         }

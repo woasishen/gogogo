@@ -8,12 +8,18 @@ namespace TcpConnect.ServerManager
 {
     internal class GetMsgManager
     {
+        private const string BROADER_CAST_START = @"b_";
+
         private readonly ServerMsgAction _serverMsgAction;
 
         private readonly Dictionary<ServerMsgId, FieldInfo> _msgActionDict =
             new Dictionary<ServerMsgId, FieldInfo>();
         private readonly Dictionary<ServerMsgId, Type> _msgTypeDict =
             new Dictionary<ServerMsgId, Type>();
+
+        public Action<string> ErrAction;
+        public Action<string> ErrorAction;
+        public Action NotSucceedAction;
 
         public GetMsgManager(ServerMsgAction serverMsgAction)
         {
@@ -41,21 +47,58 @@ namespace TcpConnect.ServerManager
 
         public void HandleMsg(Packet packet)
         {
+            if (!packet.Id.StartsWith(BROADER_CAST_START))
+            {
+                HandleNormalMsg(packet);
+            }
+            else
+            {
+                HandleBroaderCastMsg(packet);
+            }
+        }
+
+        private void HandleNormalMsg(Packet packet)
+        {
             var id = (ServerMsgId)Enum.Parse(typeof(ServerMsgId), packet.Id);
+            var serverMsgBase = (ServerMsgBase)JsonConvert.DeserializeObject(packet.Msg.ToString(), 
+                _msgTypeDict.ContainsKey(id) ? _msgTypeDict[id] : typeof(ServerMsgBase));
+            if (!string.IsNullOrEmpty(serverMsgBase.Err))
+            {
+                //数据库内部错误
+                ErrAction?.Invoke(serverMsgBase.Err);
+                return;
+            }
+            if (!string.IsNullOrEmpty(serverMsgBase.Error))
+            {
+                ErrorAction?.Invoke(serverMsgBase.Error);
+                return;
+            }
+            if (!serverMsgBase.Succeed)
+            {
+                NotSucceedAction.Invoke();
+                return;
+            }
+
             var action = _msgActionDict[id].GetValue(_serverMsgAction);
             if (action == null)
             {
                 return;
             }
             var methond = action.GetType().GetMethod("Invoke");
-            if (packet.Id.StartsWith("b_"))
+            methond.Invoke(action, new object[] { serverMsgBase });
+        }
+
+        private void HandleBroaderCastMsg(Packet packet)
+        {
+            var id = (ServerMsgId)Enum.Parse(typeof(ServerMsgId), packet.Id);
+
+            var action = _msgActionDict[id].GetValue(_serverMsgAction);
+            if (action == null)
             {
-                methond.Invoke(action, new object[] {packet.Msg.ToString()});
                 return;
             }
-            var msg = JsonConvert.DeserializeObject(packet.Msg.ToString(), _msgTypeDict[id]);
-            
-            methond.Invoke(action, new[] { msg });
+            var methond = action.GetType().GetMethod("Invoke");
+            methond.Invoke(action, new[] { packet.Msg });
         }
     }
 }

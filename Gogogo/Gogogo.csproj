@@ -60,11 +60,11 @@
     <Compile Include="Forms\RoomForms\CreateRoomForm.Designer.cs">
       <DependentUpon>CreateRoomForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Helper\Border.cs" />
+    <Compile Include="Entities\Border.cs" />
     <Compile Include="Instances\LogInstance.cs" />
-    <Compile Include="StaticData\GlobalStatic.cs" />
-    <Compile Include="StaticData\Extentions.cs" />
-    <Compile Include="StaticData\HandleCtrlInOtherThread.cs" />
+    <Compile Include="Statics\GlobalStatic.cs" />
+    <Compile Include="Statics\Extentions.cs" />
+    <Compile Include="Statics\HandleCtrlInOtherThread.cs" />
     <Compile Include="Forms\LoginForms\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +98,7 @@
       <DependentUpon>RegistForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Instances\TcpInstance.cs" />
+    <Compile Include="Statics\RoomStatic.cs" />
     <EmbeddedResource Include="Forms\BaseForm.resx">
       <DependentUpon>BaseForm.cs</DependentUpon>
     </EmbeddedResource>

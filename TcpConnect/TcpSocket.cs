@@ -16,10 +16,14 @@ namespace TcpConnect
         private readonly TcpClient _client;
         private readonly int _recieveBuffSize;
 
-        private readonly SyncQueue<Packet> _sendQueue = new SyncQueue<Packet>();
+        private readonly SyncQueue<ClientMsgBase> _sendQueue = new SyncQueue<ClientMsgBase>();
         private readonly SyncQueue<Packet> _getQueue = new SyncQueue<Packet>();
 
         private readonly GetMsgManager _getMsgManager;
+
+        public Action<string> ErrAction;
+        public Action<string> ErrorAction;
+        public Action NotSucceedAction;
 
         public ServerMsgAction MsgActions { get; } = new ServerMsgAction();
 
@@ -27,7 +31,12 @@ namespace TcpConnect
 
         public TcpSocket(string address, int port)
         {
-            _getMsgManager = new GetMsgManager(MsgActions);
+            _getMsgManager = new GetMsgManager(MsgActions)
+            {
+                ErrAction = s => ErrAction.Invoke(s),
+                ErrorAction = s => ErrorAction.Invoke(s),
+                NotSucceedAction = () => NotSucceedAction.Invoke(),
+            };
             SendMethod = new SendMethod(_sendQueue);
 
             _client = new TcpClient(address, port);
@@ -47,6 +56,11 @@ namespace TcpConnect
             handleMsgThread.Start();
         }
 
+        ~TcpSocket()
+        {
+            _client.Close();
+        }
+
         private void HandleMsgFromServer()
         {
             while (true)
@@ -64,7 +78,7 @@ namespace TcpConnect
                 var msg = _sendQueue.Dequeue();
                 using (var ms = new MemoryStream())
                 {
-                    var json = JsonConvert.SerializeObject(msg);
+                    var json = JsonConvert.SerializeObject(msg.ToPacket());
                     using (var sw = new StreamWriter(ms))
                     {
                         sw.Write(json);
@@ -108,8 +122,9 @@ namespace TcpConnect
                 bodyStream.Position = 0;
                 var str = sr.ReadToEnd();
                 var packet = JsonConvert.DeserializeObject<Packet>(str);
-                _getQueue.Enqueue(packet);
                 bodyStream.SetLength(0);
+                _getQueue.Enqueue(packet);
+                
             }
             // ReSharper disable once FunctionNeverReturns
         }

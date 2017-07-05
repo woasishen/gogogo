@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using Gogogo.Helper;
-using Gogogo.StaticData;
+using Gogogo.Entities;
+using Gogogo.Instances;
+using Gogogo.Statics;
 using TcpConnect.ServerInterface;
 
 namespace Gogogo.Forms.ChessForms
@@ -15,8 +16,8 @@ namespace Gogogo.Forms.ChessForms
         private static readonly Dictionary<CellStatus, Brush> CellBrush =
             new Dictionary<CellStatus, Brush>
             {
-                {CellStatus.Black, new SolidBrush(Color.Black)},
-                {CellStatus.White, new SolidBrush(Color.White)}
+                {CellStatus.B, new SolidBrush(Color.Black)},
+                {CellStatus.W, new SolidBrush(Color.White)}
             };
 
         private float _cellWStep;
@@ -27,39 +28,9 @@ namespace Gogogo.Forms.ChessForms
         private readonly Brush _numBrush = new SolidBrush(Color.Red);
         private readonly Pen _curStepTips = new Pen(Color.Green, 3);
 
-        private CellStatus _curStatus = CellStatus.Black;
-        public CellStatus CurStatus
-        {
-            private set
-            {
-                _curStatus = value;
-                StepStatusChanged.Invoke();
-            }
-            get { return _curStatus; }
-        }
-
         private const float NUM_W = 20;
         private const float NUM_H = 20;
         private readonly Border _border;
-
-        public bool AutoCompute { get; set; }
-        public Action<int, TimeSpan> ComputeFinished;
-        public Action StepStatusChanged { set; get; }
-
-        public void Redo()
-        {
-            if (!_border.UnPutChess())
-            {
-                return;
-            }
-            CurStatus = CellStatusHelper.Not(CurStatus);
-        }
-
-        public void RestartGame()
-        {
-            _border.ClearChess();
-            CurStatus = CellStatus.Black;
-        }
 
         public ChessMainControl()
         {
@@ -67,16 +38,21 @@ namespace Gogogo.Forms.ChessForms
             ReInitCellSize();
             _border = new Border
             {
-                ChessChanged = Refresh
+                ChessChanged = () =>
+                {
+                    HandleCtrlInOtherThread.HandleCtrlInBackGroundThread(
+                        this,
+                        Refresh);
+                }
             };
         }
 
         private void ReInitCellSize()
         {
             _cellWStep = ((float)ClientSize.Width - Padding.Left - Padding.Right)
-                / (GlobalStatic.BORDER_SIZE - 1);
+                / (RoomStatic.BorderSize - 1);
             _cellHStep = ((float)ClientSize.Height - Padding.Top - Padding.Bottom)
-                / (GlobalStatic.BORDER_SIZE - 1);
+                / (RoomStatic.BorderSize - 1);
             _itemDiameter = Math.Min(_cellWStep, _cellHStep) * ITEM_SIZE_SCALE;
         }
 
@@ -93,7 +69,7 @@ namespace Gogogo.Forms.ChessForms
 
         private void DrawNums(Graphics g)
         {
-            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
+            for (var i = 0; i < RoomStatic.BorderSize; i++)
             {
                 g.DrawString(
                     ((char)(i + 65)).ToString(),
@@ -110,10 +86,10 @@ namespace Gogogo.Forms.ChessForms
                         LineAlignment = StringAlignment.Far
                     });
             }
-            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
+            for (var i = 0; i < RoomStatic.BorderSize; i++)
             {
                 g.DrawString(
-                    i.ToString(),
+                    (i + 1).ToString(),
                     DefaultFont,
                     _numBrush,
                     new RectangleF(
@@ -131,7 +107,7 @@ namespace Gogogo.Forms.ChessForms
 
         private void DrawLines(Graphics g)
         {
-            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
+            for (var i = 0; i < RoomStatic.BorderSize; i++)
             {
                 g.DrawLine(_linePen,
                     i * _cellWStep + Padding.Left,
@@ -139,7 +115,7 @@ namespace Gogogo.Forms.ChessForms
                     i * _cellWStep + Padding.Left,
                     ClientSize.Height - Padding.Bottom);
             }
-            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
+            for (var i = 0; i < RoomStatic.BorderSize; i++)
             {
                 g.DrawLine(_linePen,
                     Padding.Left,
@@ -151,11 +127,11 @@ namespace Gogogo.Forms.ChessForms
 
         private void DrawCells(Graphics g)
         {
-            for (var i = 0; i < GlobalStatic.BORDER_SIZE; i++)
+            for (var i = 0; i < RoomStatic.BorderSize; i++)
             {
-                for (var j = 0; j < GlobalStatic.BORDER_SIZE; j++)
+                for (var j = 0; j < RoomStatic.BorderSize; j++)
                 {
-                    if (_border.GetCellStatus(i, j) == CellStatus.Empty)
+                    if (_border.GetCellStatus(i, j) == CellStatus.E)
                     {
                         continue;
                     }
@@ -165,7 +141,8 @@ namespace Gogogo.Forms.ChessForms
                         Padding.Top + j * _cellHStep - _itemDiameter / 2,
                         _itemDiameter,
                         _itemDiameter);
-                    if (i == _border.LastStepPos.X && j == _border.LastStepPos.Y)
+                    if (i == RoomStatic.Steps.Peek().Pos.X 
+                        && j == RoomStatic.Steps.Peek().Pos.Y)
                     {
                         g.DrawLine(_curStepTips,
                             Padding.Left + i * _cellWStep - -_itemDiameter / 2,
@@ -191,25 +168,26 @@ namespace Gogogo.Forms.ChessForms
             Refresh();
         }
 
-        private void MainControl_MouseClick(object sender, MouseEventArgs e)
-        {
-            var x = (int)Math.Round((e.X - Padding.Left) / _cellWStep);
-            var y = (int)Math.Round((e.Y - Padding.Top) / _cellHStep);
-            if (x < 0 || y < 0 
-                || x > GlobalStatic.BORDER_SIZE || y > GlobalStatic.BORDER_SIZE 
-                || _border.GetCellStatus(x ,y) != CellStatus.Empty)
-            {
-                return;
-            }
-            var pos = new Pos(x, y);
-            _border.PutChess(pos, CurStatus);
-            CurStatus = CellStatusHelper.Not(CurStatus);
-        }
-
         protected override void OnGotFocus(EventArgs e)
         {
             base.OnGotFocus(e);
             Refresh();
+        }
+
+        private void ChessMainControl_MouseClick(object sender, MouseEventArgs e)
+        {
+            var x = (int)Math.Round((e.X - Padding.Left) / _cellWStep);
+            var y = (int)Math.Round((e.Y - Padding.Top) / _cellHStep);
+            if (x < 0 || y < 0
+                || x > RoomStatic.BorderSize
+                || y > RoomStatic.BorderSize
+                || _border.GetCellStatus(x, y) != CellStatus.E)
+            {
+                return;
+            }
+            //TcpInstance.Instance.Socket.SendMethod.RoomMsg(
+            //        RoomMsgInfoId.PutChess,
+            //        new PosInfo(x, y, _border.CurStatus));
         }
     }
 }

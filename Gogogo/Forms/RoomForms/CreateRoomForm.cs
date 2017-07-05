@@ -10,6 +10,7 @@ namespace Gogogo.Forms.RoomForms
         public CreateRoomForm()
         {
             InitializeComponent();
+            sizeComboBox.SelectedIndex = 0;
         }
 
         private void createRoomButton_Click(object sender, EventArgs e)
@@ -20,6 +21,7 @@ namespace Gogogo.Forms.RoomForms
                 return;
             }
             TcpInstance.Instance.Socket.SendMethod.CreateRoom(
+                Convert.ToInt32(sizeComboBox.SelectedItem.ToString()),
                 nameTextBox.Text,
                 passwordTextBox.Text);
             DialogResult = DialogResult.OK;

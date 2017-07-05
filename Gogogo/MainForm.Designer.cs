@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.roomInfoPanel = new System.Windows.Forms.Panel();
+            this.joinButton = new System.Windows.Forms.Button();
             this.logListBox = new System.Windows.Forms.ListBox();
             this.listBox = new System.Windows.Forms.ListBox();
             this.topTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -43,7 +44,6 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.noRoomLabel = new System.Windows.Forms.Label();
-            this.joinButton = new System.Windows.Forms.Button();
             this.roomInfoPanel.SuspendLayout();
             this.topTableLayoutPanel.SuspendLayout();
             this.panel.SuspendLayout();
@@ -60,6 +60,17 @@
             this.roomInfoPanel.Size = new System.Drawing.Size(254, 318);
             this.roomInfoPanel.TabIndex = 4;
             // 
+            // joinButton
+            // 
+            this.joinButton.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.joinButton.Location = new System.Drawing.Point(87, 57);
+            this.joinButton.Name = "joinButton";
+            this.joinButton.Size = new System.Drawing.Size(92, 47);
+            this.joinButton.TabIndex = 1;
+            this.joinButton.Text = "加入";
+            this.joinButton.UseVisualStyleBackColor = true;
+            this.joinButton.Click += new System.EventHandler(this.joinButton_Click);
+            // 
             // logListBox
             // 
             this.logListBox.BackColor = System.Drawing.SystemColors.Info;
@@ -68,9 +79,9 @@
             this.logListBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.logListBox.FormattingEnabled = true;
             this.logListBox.ItemHeight = 30;
-            this.logListBox.Location = new System.Drawing.Point(0, 198);
+            this.logListBox.Location = new System.Drawing.Point(0, 168);
             this.logListBox.Name = "logListBox";
-            this.logListBox.Size = new System.Drawing.Size(254, 120);
+            this.logListBox.Size = new System.Drawing.Size(254, 150);
             this.logListBox.TabIndex = 0;
             this.logListBox.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.logListBox_DrawItem);
             // 
@@ -234,17 +245,6 @@
             this.noRoomLabel.Size = new System.Drawing.Size(169, 20);
             this.noRoomLabel.TabIndex = 6;
             this.noRoomLabel.Text = "当前没有任何房间";
-            // 
-            // joinButton
-            // 
-            this.joinButton.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.joinButton.Location = new System.Drawing.Point(87, 65);
-            this.joinButton.Name = "joinButton";
-            this.joinButton.Size = new System.Drawing.Size(92, 47);
-            this.joinButton.TabIndex = 1;
-            this.joinButton.Text = "加入";
-            this.joinButton.UseVisualStyleBackColor = true;
-            this.joinButton.Click += new System.EventHandler(this.joinButton_Click);
             // 
             // MainForm
             // 

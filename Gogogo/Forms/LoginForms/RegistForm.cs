@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Gogogo.Instances;
-using Gogogo.StaticData;
+using Gogogo.Statics;
 
 namespace Gogogo.Forms.LoginForms
 {
@@ -27,6 +27,9 @@ namespace Gogogo.Forms.LoginForms
                 confirmTextBox.BackColor = GlobalStatic.InvalidBackColor;
                 return;
             }
+            Properties.Settings.Default.AccountId = nameTextBox.Text;
+            Properties.Settings.Default.Password = passwordTextBox.Text;
+            Properties.Settings.Default.Save();
             TcpInstance.Instance.Socket.SendMethod.Regist(
                 nameTextBox.Text,
                 passwordTextBox.Text);

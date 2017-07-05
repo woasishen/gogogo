@@ -7,16 +7,22 @@ namespace TcpConnect.ServerInterface
 {
     public enum ServerMsgId
     {
-        no_user_err_c,
         loginc,
         registc,
         logoutc,
+        forcelogoutc,
         getroomsc,
         createroomc,
         joinroomc,
         leaveroomc,
-        b_leave,
-        b_join,
+        savestepsc,
+
+        b_leavec,
+        b_joinc,
+        b_putc,
+        b_unputc,
+        b_restartc,
+        b_setroomsizec,
     }
 
     public abstract class ServerMsgBase
@@ -25,19 +31,19 @@ namespace TcpConnect.ServerInterface
         /// server error
         /// </summary>
         [JsonProperty(@"err")]
-        public string Err { get; private set; }
+        internal string Err { get; private set; }
 
         /// <summary>
         /// normal error
         /// </summary>
         [JsonProperty(@"error")]
-        public string Error { get; private set; }
+        internal string Error { get; private set; }
 
         /// <summary>
         /// sucess
         /// </summary>
         [JsonProperty(@"succeed")]
-        public bool Succeed { get; private set; }
+        internal bool Succeed { get; private set; }
     }
 
     public class ServerIdAttribute : Attribute
@@ -49,13 +55,8 @@ namespace TcpConnect.ServerInterface
         }
     }
 
-    public class ServerMsgType
+    public abstract class ServerMsgType
     {
-        [ServerId(ServerMsgId.no_user_err_c)]
-        public class NoUserErr: ServerMsgBase
-        {
-        }
-
         [ServerId(ServerMsgId.loginc)]
         public class Login : ServerMsgBase
         {
@@ -76,11 +77,6 @@ namespace TcpConnect.ServerInterface
             public string UserName { get; private set; }
         }
 
-        [ServerId(ServerMsgId.logoutc)]
-        public class Logout : ServerMsgBase
-        {
-        }
-
         [ServerId(ServerMsgId.getroomsc)]
         public class GetRooms : ServerMsgBase
         {
@@ -91,29 +87,19 @@ namespace TcpConnect.ServerInterface
             public Dictionary<string, RoomInfo> Data { get; private set; }
         }
 
-        [ServerId(ServerMsgId.createroomc)]
-        public class CreateRoomc : ServerMsgBase
-        {
-        }
-
         [ServerId(ServerMsgId.joinroomc)]
         public class JoinRoom : ServerMsgBase
         {
-            [JsonProperty(@"roomsteps")]
-            public Stack<Pos> RoomSteps { get; private set; }
-        }
+            [JsonProperty(@"roomsize")]
+            public int RoomSize { get; private set; }
 
-        [ServerId(ServerMsgId.leaveroomc)]
-        public class LeaveRoom : ServerMsgBase
-        {
+            [JsonProperty(@"roomsteps")]
+            public Stack<PosInfo> RoomSteps { get; private set; }
         }
     }
 
     public class ServerMsgAction
     {
-        [ServerId(ServerMsgId.no_user_err_c)]
-        public Action<ServerMsgType.NoUserErr> NoUserErr;
-
         [ServerId(ServerMsgId.loginc)]
         public Action<ServerMsgType.Login> Loginc;
 
@@ -121,24 +107,41 @@ namespace TcpConnect.ServerInterface
         public Action<ServerMsgType.Regist> Registc;
 
         [ServerId(ServerMsgId.logoutc)]
-        public Action<ServerMsgType.Logout> Logoutc;
+        public Action<ServerMsgBase> Logoutc;
+
+        [ServerId(ServerMsgId.forcelogoutc)]
+        public Action<ServerMsgBase> ForceLogoutc;
 
         [ServerId(ServerMsgId.getroomsc)]
         public Action<ServerMsgType.GetRooms> GetRoomsc;
 
         [ServerId(ServerMsgId.createroomc)]
-        public Action<ServerMsgType.CreateRoomc> CreateRoomc;
+        public Action<ServerMsgBase> CreateRoomc;
 
         [ServerId(ServerMsgId.joinroomc)]
         public Action<ServerMsgType.JoinRoom> JoinRoomc;
 
         [ServerId(ServerMsgId.leaveroomc)]
-        public Action<ServerMsgType.LeaveRoom> LeaveRoomc;
+        public Action<ServerMsgBase> LeaveRoomc;
 
-        [ServerId(ServerMsgId.b_join)]
+
+        //broadcast
+        [ServerId(ServerMsgId.b_joinc)]
         public Action<string> B_Join;
 
-        [ServerId(ServerMsgId.b_leave)]
+        [ServerId(ServerMsgId.b_leavec)]
         public Action<string> B_Leave;
+
+        [ServerId(ServerMsgId.b_putc)]
+        public Action<string> B_Putc;
+
+        [ServerId(ServerMsgId.b_unputc)]
+        public Action<string> B_UnPutc;
+
+        [ServerId(ServerMsgId.b_restartc)]
+        public Action<string> B_Restartc;
+
+        [ServerId(ServerMsgId.b_setroomsizec)]
+        public Action<string> B_SetRoomSizec;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 // ReSharper disable InconsistentNaming
 
 namespace TcpConnect.ServerInterface
@@ -12,14 +13,25 @@ namespace TcpConnect.ServerInterface
         createroom,
         joinroom,
         leaveroom,
+
+        put,
+        unput,
+        restart,
+        setroomsize,
     }
 
     public abstract class ClientMsgBase
     {
+        [JsonIgnore]
         public abstract ClientMsgId ClientMsgId { get; }
+
+        public Packet ToPacket()
+        {
+            return new Packet(ClientMsgId.ToString(), this);
+        }
     }
 
-    public class ClientMsgType
+    public abstract class ClientMsgType
     {
         public class Login : ClientMsgBase
         {
@@ -65,12 +77,15 @@ namespace TcpConnect.ServerInterface
         public class CreateRoom : ClientMsgBase
         {
             public override ClientMsgId ClientMsgId => ClientMsgId.createroom;
-            public CreateRoom(string name, string pwd)
+            public CreateRoom(int size, string name, string pwd)
             {
+                Size = size;
                 Name = name;
                 Pwd = pwd;
             }
 
+            [JsonProperty(@"size")]
+            public int Size { get; private set; }
             [JsonProperty(@"name")]
             public string Name { get; private set; }
             [JsonProperty(@"pwd")]
@@ -96,13 +111,49 @@ namespace TcpConnect.ServerInterface
         {
             public override ClientMsgId ClientMsgId => ClientMsgId.leaveroom;
         }
+
+        public class Put : ClientMsgBase
+        {
+            public override ClientMsgId ClientMsgId => ClientMsgId.put;
+
+            public Put(PosInfo posInfo)
+            {
+                PosInfo = posInfo.ToString();
+            }
+
+            [JsonProperty(@"posinfo")]
+            public string PosInfo { get; }
+        }
+
+        public class UnPut : ClientMsgBase
+        {
+            public override ClientMsgId ClientMsgId => ClientMsgId.unput;
+        }
+
+        public class Restart : ClientMsgBase
+        {
+            public override ClientMsgId ClientMsgId => ClientMsgId.restart;
+        }
+
+        public class SetRoomSize : ClientMsgBase
+        {
+            public override ClientMsgId ClientMsgId => ClientMsgId.setroomsize;
+
+            public SetRoomSize(int size)
+            {
+                Size = size;
+            }
+
+            [JsonProperty(@"size")]
+            public int Size { get; private set; }
+        }
     }
 
     public class SendMethod
     {
-        private readonly SyncQueue<Packet> _sendQueue;
+        private readonly SyncQueue<ClientMsgBase> _sendQueue;
 
-        public SendMethod(SyncQueue<Packet> sendQueue)
+        public SendMethod(SyncQueue<ClientMsgBase> sendQueue)
         {
             _sendQueue = sendQueue;
         }
@@ -110,43 +161,67 @@ namespace TcpConnect.ServerInterface
         public void Login(string name, string password)
         {
             var msg = new ClientMsgType.Login(name, password);
-            _sendQueue.Enqueue(new Packet(msg.ClientMsgId.ToString(), msg));
+            _sendQueue.Enqueue(msg);
         }
 
         public void Regist(string name, string password)
         {
             var msg = new ClientMsgType.Regist(name, password);
-            _sendQueue.Enqueue(new Packet(msg.ClientMsgId.ToString(), msg));
+            _sendQueue.Enqueue(msg);
         }
 
         public void Logout()
         {
             var msg = new ClientMsgType.Logout();
-            _sendQueue.Enqueue(new Packet(msg.ClientMsgId.ToString(), msg));
+            _sendQueue.Enqueue(msg);
         }
 
-        public void CreateRoom(string name, string password)
+        public void CreateRoom(int size, string name, string password)
         {
-            var msg = new ClientMsgType.CreateRoom(name, password);
-            _sendQueue.Enqueue(new Packet(msg.ClientMsgId.ToString(), msg));
+            var msg = new ClientMsgType.CreateRoom(size, name, password);
+            _sendQueue.Enqueue(msg);
         }
 
         public void GetRooms()
         {
             var msg = new ClientMsgType.GetRooms();
-            _sendQueue.Enqueue(new Packet(msg.ClientMsgId.ToString(), msg));
+            _sendQueue.Enqueue(msg);
         }
 
         public void JoinRoom(string name, string pwd = "")
         {
             var msg = new ClientMsgType.JoinRoom(name, pwd);
-            _sendQueue.Enqueue(new Packet(msg.ClientMsgId.ToString(), msg));
+            _sendQueue.Enqueue(msg);
         }
 
         public void LeaveRoom(string name)
         {
             var msg = new ClientMsgType.LeaveRoom();
-            _sendQueue.Enqueue(new Packet(msg.ClientMsgId.ToString(), msg));
+            _sendQueue.Enqueue(msg);
+        }
+
+        public void PutChess(PosInfo posInfo)
+        {
+            var msg = new ClientMsgType.Put(posInfo);
+            _sendQueue.Enqueue(msg);
+        }
+
+        public void UnPutChess()
+        {
+            var msg = new ClientMsgType.UnPut();
+            _sendQueue.Enqueue(msg);
+        }
+
+        public void Restart()
+        {
+            var msg = new ClientMsgType.Restart();
+            _sendQueue.Enqueue(msg);
+        }
+
+        public void SetRoomSize(int size)
+        {
+            var msg = new ClientMsgType.SetRoomSize(size);
+            _sendQueue.Enqueue(msg);
         }
     }
 }

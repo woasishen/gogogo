@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Gogogo.StaticData;
+using Gogogo.Statics;
 using TcpConnect;
 using TcpConnect.ServerInterface;
 
@@ -7,8 +7,6 @@ namespace Gogogo.Instances
 {
     public class TcpInstance
     {
-        public Dictionary<string, RoomInfo> RoomsDict = new Dictionary<string, RoomInfo>();
-
         public static TcpInstance Instance { get; } = new TcpInstance();
 
         //public static readonly TcpSocket Socket = new TcpSocket("111.206.45.12", 30021);
@@ -16,13 +14,19 @@ namespace Gogogo.Instances
 
         public void Init()
         {
-            Socket.MsgActions.NoUserErr = NoUserErrc;
+            Socket.ErrAction += s => LogInstance.Instance.LogError(@"Err:" + s);
+            Socket.ErrorAction += s => LogInstance.Instance.LogError(@"Error:" + s);
+            Socket.NotSucceedAction += () => LogInstance.Instance.LogError(@"请求未成功");
+
             Socket.MsgActions.Loginc = Loginc;
             Socket.MsgActions.Registc = Registc;
             Socket.MsgActions.Logoutc = Logoutc;
+            Socket.MsgActions.ForceLogoutc = ForceLogoutc;
 
             Socket.MsgActions.GetRoomsc = GetRoomsc;
             Socket.MsgActions.CreateRoomc = CreateRoomc;
+
+            Socket.MsgActions.JoinRoomc = JoinRoomc;
 
             Socket.MsgActions.B_Join = BJoin;
             Socket.MsgActions.B_Leave = BLeave;
@@ -30,96 +34,54 @@ namespace Gogogo.Instances
 
         private void BLeave(string bLeave)
         {
-            RoomsDict[bLeave].PlayerCount--;
+            RoomStatic.RoomsDict[bLeave].PlayerCount--;
         }
 
         private void BJoin(string bJoin)
         {
-            RoomsDict[bJoin].PlayerCount++;
+            RoomStatic.RoomsDict[bJoin].PlayerCount++;
         }
 
         private void GetRoomsc(ServerMsgType.GetRooms msg)
         {
-            RoomsDict = msg.Data;
-        }
-
-        private void NoUserErrc(ServerMsgType.NoUserErr msg)
-        {
-            LogInstance.Instance.LogError(@"请先登录");
+            RoomStatic.RoomsDict = msg.Data;
         }
 
         private void Loginc(ServerMsgType.Login msg)
         {
-            if (!string.IsNullOrEmpty(msg.Err))
-            {
-                LogInstance.Instance.LogError(@"服务器数据库内部错误:Loginc_" + msg.Err);
-                return;
-            }
-            if (!string.IsNullOrEmpty(msg.Error))
-            {
-                LogInstance.Instance.LogError(@"登录失败:" + msg.Error);
-                return;
-            }
-            if (!msg.Succeed)
-            {
-                LogInstance.Instance.LogError(@"登录失败:未知错误");
-                return;
-            }
             LogInstance.Instance.LogMsg(@"登录成功");
-            GlobalStatic.CurUser = ((ServerMsgType.Login) msg).UserName;
+            GlobalStatic.CurUser = msg.UserName;
         }
 
         private void Registc(ServerMsgType.Regist msg)
         {
-            if (!string.IsNullOrEmpty(msg.Err))
-            {
-                LogInstance.Instance.LogError(@"服务器数据库内部错误:Registc_" + msg.Err);
-                return;
-            }
-            if (!string.IsNullOrEmpty(msg.Error))
-            {
-                LogInstance.Instance.LogError(@"注册失败:" + msg.Error);
-                return;
-            }
-            if (!msg.Succeed)
-            {
-                LogInstance.Instance.LogError(@"注册失败:未知错误");
-                return;
-            }
             LogInstance.Instance.LogMsg(@"注册成功");
-            GlobalStatic.CurUser = ((ServerMsgType.Regist)msg).UserName;
+            GlobalStatic.CurUser = msg.UserName;
         }
 
         private void Logoutc(ServerMsgType.Logout msg)
         {
-            if (!msg.Succeed)
-            {
-                LogInstance.Instance.LogError(@"登出失败:未知错误");
-                return;
-            }
             LogInstance.Instance.LogMsg(@"登出成功");
+            GlobalStatic.CurUser = null;
+        }
+
+        private void ForceLogoutc(ServerMsgType.ForceLogout obj)
+        {
+            LogInstance.Instance.LogError(@"用户在其他地方登陆，强制登出");
             GlobalStatic.CurUser = null;
         }
 
         private void CreateRoomc(ServerMsgType.CreateRoomc msg)
         {
-            if (!string.IsNullOrEmpty(msg.Err))
-            {
-                LogInstance.Instance.LogError(@"服务器数据库内部错误:CreateRoomc_" + msg.Err);
-                return;
-            }
-            if (!string.IsNullOrEmpty(msg.Error))
-            {
-                LogInstance.Instance.LogError(@"创建房间失败:" + msg.Error);
-                return;
-            }
-            if (!msg.Succeed)
-            {
-                LogInstance.Instance.LogError(@"创建房间失败:未知错误");
-                return;
-            }
             LogInstance.Instance.LogMsg(@"创建房间成功");
             Socket.SendMethod.GetRooms();
+        }
+
+        private void JoinRoomc(ServerMsgType.JoinRoom joinRoom)
+        {
+            LogInstance.Instance.LogMsg(@"加入房间成功");
+            RoomStatic.Steps = joinRoom.RoomSteps ?? new Stack<PosInfo>();
+            RoomStatic.BorderSize = joinRoom.RoomSize;
         }
     }
 }
