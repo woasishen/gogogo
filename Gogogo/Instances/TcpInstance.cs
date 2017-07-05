@@ -59,19 +59,19 @@ namespace Gogogo.Instances
             GlobalStatic.CurUser = msg.UserName;
         }
 
-        private void Logoutc(ServerMsgType.Logout msg)
+        private void Logoutc(ServerMsgBase msg)
         {
             LogInstance.Instance.LogMsg(@"登出成功");
             GlobalStatic.CurUser = null;
         }
 
-        private void ForceLogoutc(ServerMsgType.ForceLogout obj)
+        private void ForceLogoutc(ServerMsgBase msg)
         {
             LogInstance.Instance.LogError(@"用户在其他地方登陆，强制登出");
             GlobalStatic.CurUser = null;
         }
 
-        private void CreateRoomc(ServerMsgType.CreateRoomc msg)
+        private void CreateRoomc(ServerMsgBase msg)
         {
             LogInstance.Instance.LogMsg(@"创建房间成功");
             Socket.SendMethod.GetRooms();

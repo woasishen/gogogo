@@ -16,6 +16,8 @@ namespace TcpConnect.ServerManager
             new Dictionary<ServerMsgId, FieldInfo>();
         private readonly Dictionary<ServerMsgId, Type> _msgTypeDict =
             new Dictionary<ServerMsgId, Type>();
+        private readonly Dictionary<ServerMsgId, Type> _broadcastMsgTypeDict =
+            new Dictionary<ServerMsgId, Type>();
 
         public Action<string> ErrAction;
         public Action<string> ErrorAction;
@@ -43,6 +45,16 @@ namespace TcpConnect.ServerManager
                 }
                 _msgTypeDict[serverIdAttr.Id] = typeInfo;
             }
+
+            foreach (var typeInfo in typeof(BroadcastMsgType).GetNestedTypes())
+            {
+                var serverIdAttr = (ServerIdAttribute)Attribute.GetCustomAttribute(typeInfo, typeof(ServerIdAttribute));
+                if (serverIdAttr == null)
+                {
+                    continue;
+                }
+                _broadcastMsgTypeDict[serverIdAttr.Id] = typeInfo;
+            }
         }
 
         public void HandleMsg(Packet packet)
@@ -59,7 +71,8 @@ namespace TcpConnect.ServerManager
 
         private void HandleNormalMsg(Packet packet)
         {
-            var id = (ServerMsgId)Enum.Parse(typeof(ServerMsgId), packet.Id);
+            ServerMsgId id;
+            Enum.TryParse(packet.Id, out id);
             var serverMsgBase = (ServerMsgBase)JsonConvert.DeserializeObject(packet.Msg.ToString(), 
                 _msgTypeDict.ContainsKey(id) ? _msgTypeDict[id] : typeof(ServerMsgBase));
             if (!string.IsNullOrEmpty(serverMsgBase.Err))
@@ -92,13 +105,17 @@ namespace TcpConnect.ServerManager
         {
             var id = (ServerMsgId)Enum.Parse(typeof(ServerMsgId), packet.Id);
 
+            var msg = _broadcastMsgTypeDict.ContainsKey(id)
+                ? JsonConvert.DeserializeObject(packet.Msg.ToString(), _broadcastMsgTypeDict[id])
+                : packet.Msg.ToString();
+
             var action = _msgActionDict[id].GetValue(_serverMsgAction);
             if (action == null)
             {
                 return;
             }
             var methond = action.GetType().GetMethod("Invoke");
-            methond.Invoke(action, new[] { packet.Msg });
+            methond.Invoke(action, new[] { msg });
         }
     }
 }

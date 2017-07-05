@@ -15,15 +15,13 @@ namespace Gogogo.Forms.ChessForms
 
         private void restarBtn_Click(object sender, EventArgs e)
         {
-            //TcpInstance.Instance.Socket.SendMethod.RoomMsg(
-            //    RoomMsgInfoId.Restart);
+            TcpInstance.Instance.Socket.SendMethod.Restart();
 
         }
 
         private void redo_Click(object sender, EventArgs e)
         {
-            //TcpInstance.Instance.Socket.SendMethod.RoomMsg(
-            //    RoomMsgInfoId.UnPutChess);
+            TcpInstance.Instance.Socket.SendMethod.UnPutChess();
         }
     }
 }

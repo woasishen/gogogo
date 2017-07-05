@@ -16,8 +16,8 @@ namespace Gogogo.Forms.ChessForms
         private static readonly Dictionary<CellStatus, Brush> CellBrush =
             new Dictionary<CellStatus, Brush>
             {
-                {CellStatus.B, new SolidBrush(Color.Black)},
-                {CellStatus.W, new SolidBrush(Color.White)}
+                {CellStatus.Black, new SolidBrush(Color.Black)},
+                {CellStatus.White, new SolidBrush(Color.White)}
             };
 
         private float _cellWStep;
@@ -131,7 +131,7 @@ namespace Gogogo.Forms.ChessForms
             {
                 for (var j = 0; j < RoomStatic.BorderSize; j++)
                 {
-                    if (_border.GetCellStatus(i, j) == CellStatus.E)
+                    if (_border.GetCellStatus(i, j) == CellStatus.Empty)
                     {
                         continue;
                     }
@@ -141,8 +141,8 @@ namespace Gogogo.Forms.ChessForms
                         Padding.Top + j * _cellHStep - _itemDiameter / 2,
                         _itemDiameter,
                         _itemDiameter);
-                    if (i == RoomStatic.Steps.Peek().Pos.X 
-                        && j == RoomStatic.Steps.Peek().Pos.Y)
+                    if (i == RoomStatic.Steps.Peek().X 
+                        && j == RoomStatic.Steps.Peek().Y)
                     {
                         g.DrawLine(_curStepTips,
                             Padding.Left + i * _cellWStep - -_itemDiameter / 2,
@@ -181,13 +181,12 @@ namespace Gogogo.Forms.ChessForms
             if (x < 0 || y < 0
                 || x > RoomStatic.BorderSize
                 || y > RoomStatic.BorderSize
-                || _border.GetCellStatus(x, y) != CellStatus.E)
+                || _border.GetCellStatus(x, y) != CellStatus.Empty)
             {
                 return;
             }
-            //TcpInstance.Instance.Socket.SendMethod.RoomMsg(
-            //        RoomMsgInfoId.PutChess,
-            //        new PosInfo(x, y, _border.CurStatus));
+            TcpInstance.Instance.Socket.SendMethod.PutChess(
+                    new PosInfo(x, y, _border.CurStatus));
         }
     }
 }

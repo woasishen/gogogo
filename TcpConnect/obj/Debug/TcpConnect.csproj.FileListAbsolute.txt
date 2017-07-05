@@ -4,4 +4,3 @@ C:\Users\Administrator.SC-201608021220\Desktop\gogogo\TcpConnect\obj\Debug\TcpCo
 C:\Users\Administrator.SC-201608021220\Desktop\gogogo\TcpConnect\obj\Debug\TcpConnect.pdb
 C:\Users\Administrator.SC-201608021220\Desktop\gogogo\TcpConnect\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Administrator.SC-201608021220\Desktop\gogogo\TcpConnect\bin\Debug\Newtonsoft.Json.xml
-C:\Users\Administrator.SC-201608021220\Desktop\gogogo\TcpConnect\obj\Debug\TcpConnect.csprojResolveAssemblyReference.cache

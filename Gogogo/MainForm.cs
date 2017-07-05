@@ -70,8 +70,8 @@ namespace Gogogo
                     Properties.Settings.Default.Password);
             }
             RoomStatic.Steps = new Stack<PosInfo>();
-            RoomStatic.Steps.Push(new PosInfo(1, 1, CellStatus.B));
-            RoomStatic.Steps.Push(new PosInfo(2, 3, CellStatus.W));
+            RoomStatic.Steps.Push(new PosInfo(1, 1, CellStatus.Black));
+            RoomStatic.Steps.Push(new PosInfo(2, 3, CellStatus.White));
         }
 
         private void JoinRoomc(object msg)
@@ -83,14 +83,11 @@ namespace Gogogo
                     Hide();
                     using (var chessForm = new ChessMainForm())
                     {
-                        if (chessForm.ShowDialog() == DialogResult.OK)
-                        {
-//                            TcpInstance.Instance.Socket.SendMethod.SaveSteps(RoomStatic.Steps);
-                        }
-                        TcpInstance.Instance.Socket.SendMethod.SaveSteps(RoomStatic.Steps);
+                        chessForm.ShowDialog();
                     }
                     Show();
                     RefreshUser(null);
+                    TcpInstance.Instance.Socket.SendMethod.LeaveRoom();
                 });
         }
 

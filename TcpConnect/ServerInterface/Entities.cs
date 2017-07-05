@@ -3,44 +3,19 @@ using Newtonsoft.Json;
 
 namespace TcpConnect.ServerInterface
 {
-    public class PosInfo
+    public class PosInfo : Pos
     {
-        private readonly int _x, _y;
-        private readonly CellStatus _cellStatus;
-
-        [JsonProperty(@"pos")]
-        public Pos Pos => new Pos(_x, _y);
         [JsonProperty(@"status")]
-        public CellStatus CellStatus => _cellStatus;
+        public CellStatus CellStatus { get; }
 
         public PosInfo(int x, int y, CellStatus cellStatus)
+            : base(x, y)
         {
-            _x = x;
-            _y = y;
-            _cellStatus = cellStatus;
-        }
-
-        public PosInfo(string serverStr)
-        {
-            var msg = serverStr.Split('_');
-
-            if (msg.Length != 3)
-            {
-                return;
-            }
-
-            int.TryParse(msg[0], out _x);
-            int.TryParse(msg[1], out _y);
-            Enum.TryParse(msg[2], out _cellStatus);
-        }
-
-        public override string ToString()
-        {
-            return $@"{_x}_{_y}_{_cellStatus}";
+            CellStatus = cellStatus;
         }
     }
 
-    public struct Pos
+    public class Pos
     {
         [JsonProperty(@"x")]
         public int X { get; }
@@ -60,15 +35,15 @@ namespace TcpConnect.ServerInterface
         /// <summary>
         /// Empty
         /// </summary>
-        E = 0,
+        Empty = 0,
         /// <summary>
         /// Black
         /// </summary>
-        B = 1,
+        Black = 1,
         /// <summary>
         /// White
         /// </summary>
-        W = 2,
+        White = 2,
     }
 
     public static class CellStatusHelper
@@ -77,11 +52,11 @@ namespace TcpConnect.ServerInterface
         {
             switch (s)
             {
-                case CellStatus.B:
-                    return CellStatus.W;
-                case CellStatus.W:
-                    return CellStatus.B;
-                case CellStatus.E:
+                case CellStatus.Black:
+                    return CellStatus.White;
+                case CellStatus.White:
+                    return CellStatus.Black;
+                case CellStatus.Empty:
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(s), s, null);

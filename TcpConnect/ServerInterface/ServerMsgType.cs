@@ -9,13 +9,13 @@ namespace TcpConnect.ServerInterface
     {
         loginc,
         registc,
-        logoutc,
-        forcelogoutc,
         getroomsc,
+
         createroomc,
         joinroomc,
         leaveroomc,
-        savestepsc,
+        logoutc,
+        forcelogoutc,
 
         b_leavec,
         b_joinc,
@@ -25,7 +25,7 @@ namespace TcpConnect.ServerInterface
         b_setroomsizec,
     }
 
-    public abstract class ServerMsgBase
+    public class ServerMsgBase
     {
         /// <summary>
         /// server error
@@ -98,6 +98,16 @@ namespace TcpConnect.ServerInterface
         }
     }
 
+    public abstract class BroadcastMsgType
+    {
+        [ServerId(ServerMsgId.b_putc)]
+        public class PutChess
+        {
+            [JsonProperty(@"posinfo")]
+            public PosInfo PosInfo { get; private set; }
+        }
+    }
+
     public class ServerMsgAction
     {
         [ServerId(ServerMsgId.loginc)]
@@ -133,7 +143,7 @@ namespace TcpConnect.ServerInterface
         public Action<string> B_Leave;
 
         [ServerId(ServerMsgId.b_putc)]
-        public Action<string> B_Putc;
+        public Action<BroadcastMsgType.PutChess> B_Putc;
 
         [ServerId(ServerMsgId.b_unputc)]
         public Action<string> B_UnPutc;

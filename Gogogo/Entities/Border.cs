@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Gogogo.Instances;
 using Gogogo.Statics;
@@ -12,7 +11,7 @@ namespace Gogogo.Entities
         private readonly CellStatus[][] _cellStatusArr;
         public Action ChessChanged;
 
-        public CellStatus CurStatus { get; set; } = CellStatus.B;
+        public CellStatus CurStatus { get; set; } = CellStatus.Black;
         public bool AutoChangeCellStatus { set; private get; } = true;
         public Border()
         {
@@ -23,8 +22,15 @@ namespace Gogogo.Entities
                 _cellStatusArr[i] = new CellStatus[RoomStatic.BorderSize];
             }
             ReInitCellStatus();
+            var tempSteps = RoomStatic.Steps.ToList();
+            foreach (var posInfo in tempSteps)
+            {
+                _cellStatusArr[posInfo.X][posInfo.Y] = posInfo.CellStatus;
+            }
 
-            TcpInstance.Instance.Socket.MsgActions.
+            TcpInstance.Instance.Socket.MsgActions.B_Putc += msg => PutChess(msg.PosInfo);
+            TcpInstance.Instance.Socket.MsgActions.B_UnPutc += UnPutChess;
+            TcpInstance.Instance.Socket.MsgActions.B_Restartc += RestartGame;
         }
 
         private void ReInitCellStatus()
@@ -33,7 +39,7 @@ namespace Gogogo.Entities
             {
                 for (var j = 0; j < RoomStatic.BorderSize; j++)
                 {
-                    _cellStatusArr[i][j] = CellStatus.E;
+                    _cellStatusArr[i][j] = CellStatus.Empty;
                 }
             }
         }
@@ -46,11 +52,11 @@ namespace Gogogo.Entities
         /// <returns></returns>
         public void PutChess(PosInfo posInfo)
         {
-            if (_cellStatusArr[posInfo.Pos.X][posInfo.Pos.Y] != CellStatus.E)
+            if (_cellStatusArr[posInfo.X][posInfo.Y] != CellStatus.Empty)
             {
                 throw new Exception("putchess not emput");
             }
-            _cellStatusArr[posInfo.Pos.X][posInfo.Pos.Y] = posInfo.CellStatus;
+            _cellStatusArr[posInfo.X][posInfo.Y] = posInfo.CellStatus;
 
             RoomStatic.Steps.Push(posInfo);
 
@@ -66,14 +72,14 @@ namespace Gogogo.Entities
         /// 悔棋
         /// </summary>
         /// <returns></returns>
-        public void UnPutChess()
+        public void UnPutChess(object msg)
         {
             if (!RoomStatic.Steps.Any())
             {
                 return;
             }
             var posInfo = RoomStatic.Steps.Pop();
-            _cellStatusArr[posInfo.Pos.X][posInfo.Pos.Y] = CellStatus.E;
+            _cellStatusArr[posInfo.X][posInfo.Y] = CellStatus.Empty;
 
             if (AutoChangeCellStatus)
             {
@@ -86,7 +92,7 @@ namespace Gogogo.Entities
         /// <summary>
         /// 重新开始
         /// </summary>
-        public void ClearChess()
+        public void RestartGame(object msg)
         {
             RoomStatic.Steps.Clear();
             ReInitCellStatus();

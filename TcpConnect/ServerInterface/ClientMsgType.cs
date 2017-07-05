@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 // ReSharper disable InconsistentNaming
 
 namespace TcpConnect.ServerInterface
@@ -118,11 +117,11 @@ namespace TcpConnect.ServerInterface
 
             public Put(PosInfo posInfo)
             {
-                PosInfo = posInfo.ToString();
+                PosInfo = posInfo;
             }
 
             [JsonProperty(@"posinfo")]
-            public string PosInfo { get; }
+            public PosInfo PosInfo { get; }
         }
 
         public class UnPut : ClientMsgBase
@@ -194,7 +193,7 @@ namespace TcpConnect.ServerInterface
             _sendQueue.Enqueue(msg);
         }
 
-        public void LeaveRoom(string name)
+        public void LeaveRoom()
         {
             var msg = new ClientMsgType.LeaveRoom();
             _sendQueue.Enqueue(msg);
