@@ -67,6 +67,8 @@ namespace TcpConnect.ServerInterface
 
     public class RoomInfo
     {
+        public const string DEFAULT_PWD = "default";
+
         [JsonProperty(@"pwd")]
         public string Password { get; private set; }
         [JsonProperty(@"num")]

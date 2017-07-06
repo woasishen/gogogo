@@ -22,8 +22,8 @@ namespace Gogogo.Forms.RoomForms
             }
             TcpInstance.Instance.Socket.SendMethod.CreateRoom(
                 Convert.ToInt32(sizeComboBox.SelectedItem.ToString()),
-                nameTextBox.Text,
-                passwordTextBox.Text);
+                nameTextBox.Text.Trim(),
+                passwordTextBox.Text.Trim());
             DialogResult = DialogResult.OK;
         }
 

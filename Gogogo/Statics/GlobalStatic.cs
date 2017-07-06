@@ -6,5 +6,6 @@ namespace Gogogo.Statics
     {
         public static Color InvalidBackColor = Color.Violet;
         public static string CurUser;
+
     }
 }

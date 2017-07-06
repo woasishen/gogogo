@@ -177,6 +177,7 @@ namespace TcpConnect.ServerInterface
 
         public void CreateRoom(int size, string name, string password)
         {
+            password = string.IsNullOrEmpty(password) ? RoomInfo.DEFAULT_PWD : password;
             var msg = new ClientMsgType.CreateRoom(size, name, password);
             _sendQueue.Enqueue(msg);
         }
@@ -187,7 +188,7 @@ namespace TcpConnect.ServerInterface
             _sendQueue.Enqueue(msg);
         }
 
-        public void JoinRoom(string name, string pwd = "")
+        public void JoinRoom(string name, string pwd = RoomInfo.DEFAULT_PWD)
         {
             var msg = new ClientMsgType.JoinRoom(name, pwd);
             _sendQueue.Enqueue(msg);

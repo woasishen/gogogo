@@ -122,7 +122,7 @@ namespace Gogogo
         {
             e.DrawBackground();//绘制背景 
             var pwd = ((RoomItem)listBox.Items[e.Index]).Password;
-            var myBrush = string.IsNullOrEmpty(pwd) ? Brushes.Black : Brushes.Green;
+            var myBrush = pwd == RoomInfo.DEFAULT_PWD ? Brushes.Black : Brushes.Green;
 
             e.DrawFocusRectangle();//焦点框 
 
