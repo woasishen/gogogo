@@ -31,6 +31,9 @@
             this.restarBtn = new System.Windows.Forms.Button();
             this.redo = new System.Windows.Forms.Button();
             this.bottomPanel = new System.Windows.Forms.Panel();
+            this.autoCheckBox = new System.Windows.Forms.CheckBox();
+            this.blackRadioButton = new System.Windows.Forms.RadioButton();
+            this.whiteRadioButton = new System.Windows.Forms.RadioButton();
             this._chessMainControl = new Gogogo.Forms.ChessForms.ChessMainControl();
             this.topPanel = new System.Windows.Forms.Panel();
             this.userLabel = new System.Windows.Forms.Label();
@@ -42,7 +45,7 @@
             // 
             this.restarBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.restarBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.restarBtn.Location = new System.Drawing.Point(395, 7);
+            this.restarBtn.Location = new System.Drawing.Point(201, 6);
             this.restarBtn.Name = "restarBtn";
             this.restarBtn.Size = new System.Drawing.Size(144, 60);
             this.restarBtn.TabIndex = 4;
@@ -54,7 +57,7 @@
             // 
             this.redo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.redo.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.redo.Location = new System.Drawing.Point(172, 7);
+            this.redo.Location = new System.Drawing.Point(27, 6);
             this.redo.Name = "redo";
             this.redo.Size = new System.Drawing.Size(144, 60);
             this.redo.TabIndex = 5;
@@ -65,6 +68,9 @@
             // bottomPanel
             // 
             this.bottomPanel.BackColor = System.Drawing.Color.Transparent;
+            this.bottomPanel.Controls.Add(this.autoCheckBox);
+            this.bottomPanel.Controls.Add(this.blackRadioButton);
+            this.bottomPanel.Controls.Add(this.whiteRadioButton);
             this.bottomPanel.Controls.Add(this.redo);
             this.bottomPanel.Controls.Add(this.restarBtn);
             this.bottomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -72,6 +78,40 @@
             this.bottomPanel.Name = "bottomPanel";
             this.bottomPanel.Size = new System.Drawing.Size(710, 79);
             this.bottomPanel.TabIndex = 8;
+            // 
+            // autoCheckBox
+            // 
+            this.autoCheckBox.AutoSize = true;
+            this.autoCheckBox.Checked = true;
+            this.autoCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.autoCheckBox.Location = new System.Drawing.Point(550, 20);
+            this.autoCheckBox.Name = "autoCheckBox";
+            this.autoCheckBox.Size = new System.Drawing.Size(96, 16);
+            this.autoCheckBox.TabIndex = 8;
+            this.autoCheckBox.Text = "自动切换棋子";
+            this.autoCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // blackRadioButton
+            // 
+            this.blackRadioButton.AutoSize = true;
+            this.blackRadioButton.Location = new System.Drawing.Point(421, 19);
+            this.blackRadioButton.Name = "blackRadioButton";
+            this.blackRadioButton.Size = new System.Drawing.Size(35, 16);
+            this.blackRadioButton.TabIndex = 7;
+            this.blackRadioButton.Text = "黑";
+            this.blackRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // whiteRadioButton
+            // 
+            this.whiteRadioButton.AutoSize = true;
+            this.whiteRadioButton.Checked = true;
+            this.whiteRadioButton.Location = new System.Drawing.Point(421, 50);
+            this.whiteRadioButton.Name = "whiteRadioButton";
+            this.whiteRadioButton.Size = new System.Drawing.Size(35, 16);
+            this.whiteRadioButton.TabIndex = 6;
+            this.whiteRadioButton.TabStop = true;
+            this.whiteRadioButton.Text = "白";
+            this.whiteRadioButton.UseVisualStyleBackColor = true;
             // 
             // _chessMainControl
             // 
@@ -117,6 +157,7 @@
             this.Name = "ChessMainForm";
             this.Text = "ChessMainForm";
             this.bottomPanel.ResumeLayout(false);
+            this.bottomPanel.PerformLayout();
             this.topPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -129,5 +170,8 @@
         private ChessMainControl _chessMainControl;
         private System.Windows.Forms.Panel topPanel;
         private System.Windows.Forms.Label userLabel;
+        private System.Windows.Forms.CheckBox autoCheckBox;
+        private System.Windows.Forms.RadioButton blackRadioButton;
+        private System.Windows.Forms.RadioButton whiteRadioButton;
     }
 }

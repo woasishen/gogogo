@@ -7,7 +7,8 @@ namespace Gogogo.Statics
     {
         public static Dictionary<string, RoomInfo> RoomsDict;
 
-        public static int BorderSize { set; get; }
-        public static Stack<PosInfo> Steps { set; get; }
+        public static int BorderSize { set; get; } = 13;
+
+        public static List<PosInfo> Steps { set; get; } = new List<PosInfo>();
     }
 }

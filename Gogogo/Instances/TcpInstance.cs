@@ -9,8 +9,8 @@ namespace Gogogo.Instances
     {
         public static TcpInstance Instance { get; } = new TcpInstance();
 
-        //public static readonly TcpSocket Socket = new TcpSocket("111.206.45.12", 30021);
-        public readonly TcpSocket Socket = new TcpSocket("192.168.0.252", 18080);
+        public readonly TcpSocket Socket = new TcpSocket("111.206.45.12", 30021);
+        //public readonly TcpSocket Socket = new TcpSocket("192.168.0.252", 18080);
 
         public void Init()
         {
@@ -80,7 +80,7 @@ namespace Gogogo.Instances
         private void JoinRoomc(ServerMsgType.JoinRoom joinRoom)
         {
             LogInstance.Instance.LogMsg(@"加入房间成功");
-            RoomStatic.Steps = joinRoom.RoomSteps ?? new Stack<PosInfo>();
+            RoomStatic.Steps = joinRoom.RoomSteps ?? new List<PosInfo>();
             RoomStatic.BorderSize = joinRoom.RoomSize;
         }
     }

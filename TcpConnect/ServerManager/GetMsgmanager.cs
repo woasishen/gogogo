@@ -75,15 +75,15 @@ namespace TcpConnect.ServerManager
             Enum.TryParse(packet.Id, out id);
             var serverMsgBase = (ServerMsgBase)JsonConvert.DeserializeObject(packet.Msg.ToString(), 
                 _msgTypeDict.ContainsKey(id) ? _msgTypeDict[id] : typeof(ServerMsgBase));
-            if (!string.IsNullOrEmpty(serverMsgBase.Err))
+            if (serverMsgBase.Err != null)
             {
                 //数据库内部错误
-                ErrAction?.Invoke(serverMsgBase.Err);
+                ErrAction?.Invoke(serverMsgBase.Err.ToString());
                 return;
             }
-            if (!string.IsNullOrEmpty(serverMsgBase.Error))
+            if (serverMsgBase.Error != null)
             {
-                ErrorAction?.Invoke(serverMsgBase.Error);
+                ErrorAction?.Invoke(serverMsgBase.Error.ToString());
                 return;
             }
             if (!serverMsgBase.Succeed)
@@ -107,7 +107,7 @@ namespace TcpConnect.ServerManager
 
             var msg = _broadcastMsgTypeDict.ContainsKey(id)
                 ? JsonConvert.DeserializeObject(packet.Msg.ToString(), _broadcastMsgTypeDict[id])
-                : packet.Msg.ToString();
+                : packet.Msg?.ToString();
 
             var action = _msgActionDict[id].GetValue(_serverMsgAction);
             if (action == null)

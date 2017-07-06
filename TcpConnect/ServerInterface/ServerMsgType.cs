@@ -31,13 +31,13 @@ namespace TcpConnect.ServerInterface
         /// server error
         /// </summary>
         [JsonProperty(@"err")]
-        internal string Err { get; private set; }
+        internal object Err { get; private set; }
 
         /// <summary>
         /// normal error
         /// </summary>
         [JsonProperty(@"error")]
-        internal string Error { get; private set; }
+        internal object Error { get; private set; }
 
         /// <summary>
         /// sucess
@@ -94,7 +94,7 @@ namespace TcpConnect.ServerInterface
             public int RoomSize { get; private set; }
 
             [JsonProperty(@"roomsteps")]
-            public Stack<PosInfo> RoomSteps { get; private set; }
+            public List<PosInfo> RoomSteps { get; private set; }
         }
     }
 

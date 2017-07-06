@@ -69,9 +69,6 @@ namespace Gogogo
                     Properties.Settings.Default.AccountId,
                     Properties.Settings.Default.Password);
             }
-            RoomStatic.Steps = new Stack<PosInfo>();
-            RoomStatic.Steps.Push(new PosInfo(1, 1, CellStatus.Black));
-            RoomStatic.Steps.Push(new PosInfo(2, 3, CellStatus.White));
         }
 
         private void JoinRoomc(object msg)
@@ -80,12 +77,10 @@ namespace Gogogo
                 this,
                 () =>
                 {
-                    Hide();
                     using (var chessForm = new ChessMainForm())
                     {
                         chessForm.ShowDialog();
                     }
-                    Show();
                     RefreshUser(null);
                     TcpInstance.Instance.Socket.SendMethod.LeaveRoom();
                 });
